@@ -19,7 +19,7 @@ pipeline {
                     def tempFile = writeFile file: 'index.html', text: htmlContent
 
                     // Copy the index.html file to the server using SCP
-                    sh "scp ${tempFile} user@server_ip:/var/www/html/index.html"
+                    sh "scp ${tempFile} user@35.202.20.149:/var/www/html/index.html"
                 }
             }
         }
