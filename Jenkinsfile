@@ -2,17 +2,23 @@ pipeline {
     agent any
 
     environment {
-        SSH_CREDENTIALS_ID = '123' // Update with the actual ID of your credentials
-        REMOTE_USER = 'HASNIAN' // Update with your actual username
-        REMOTE_HOST = '35.202.20.149' // Update with your remote server's IP address or hostname
-        REMOTE_DOC_ROOT = '/var/www/html' // Update with the path to your document root
+        // Define the SSH credentials ID in Jenkins
+        SSH_CREDENTIALS_ID = '123' // Update this with the actual ID of your credentials
+        // Define the remote server details
+        REMOTE_USER = 'ar784419' // Update this with your actual username
+        REMOTE_HOST = '35.202.20.149' // Update this with your remote server's hostname or IP address
+        // Define the path to the document root on the remote server
+        REMOTE_DOC_ROOT = '/var/www/html'
     }
 
     stages {
         stage('Download index.html') {
             steps {
                 script {
+                    // Define the URL of the index.html file
                     def url = 'https://raw.githubusercontent.com/HASNAIN005/tocs/main/index.html'
+
+                    // Download the index.html file using curl and store it in a workspace file
                     sh "curl -s ${url} -o index.html"
                 }
             }
@@ -20,10 +26,9 @@ pipeline {
         stage('Deploy index.html to Apache') {
             steps {
                 script {
-                    withCredentials([usernamePassword(credentialsId: env.SSH_CREDENTIALS_ID, usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]) {
-                        sh """
-                            sshpass -p ${PASSWORD} scp index.html ${USERNAME}@${env.REMOTE_HOST}:${env.REMOTE_DOC_ROOT}/index.html
-                        """
+                    // Copy the index.html file to the remote server's document root using SSH key authentication
+                    sshagent(credentials: [SSH_CREDENTIALS_ID]) {
+                        sh "scp index.html ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DOC_ROOT}/index.html"
                     }
                 }
             }
