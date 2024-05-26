@@ -15,8 +15,12 @@ pipeline {
                     echo "Content of index.html:"
                     echo htmlContent
 
+                    // Save the content to a file
+                    writeFile file: 'index.html', text: htmlContent
+
                     // Copy the index.html file to the server using SCP
-                    sh "scp index.html user@server_ip:/path/to/destination"
+                    // Replace 'user' with your actual username and '35.202.20.149' with your server IP
+                    sh "scp -i ~/.ssh/id_rsa index.html ar784419@35.202.20.149:/var/www/html/"
                 }
             }
         }
