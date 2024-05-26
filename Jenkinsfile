@@ -2,8 +2,6 @@ pipeline {
     agent any
 
     environment {
-        // Define the SSH credentials ID in Jenkins
-        SSH_CREDENTIALS_ID = '123' // Update this with the actual ID of your credentials
         // Define the remote server details
         REMOTE_USER = 'ar784419' // Update this with your actual username
         REMOTE_HOST = '35.202.20.149' // Update this with your remote server's hostname or IP address
@@ -26,10 +24,11 @@ pipeline {
         stage('Deploy index.html to Apache') {
             steps {
                 script {
-                    // Copy the index.html file to the remote server's document root using SSH key authentication
-                    sshagent(credentials: [SSH_CREDENTIALS_ID]) {
-                        sh "scp index.html ${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_DOC_ROOT}/index.html"
-                    }
+                    // Copy the index.html file to the remote server's document root using SSH credentials configured in Jenkins
+                    sh """
+                        ssh ${env.REMOTE_USER}@${env.REMOTE_HOST} "mkdir -p ${env.REMOTE_DOC_ROOT}"
+                        scp index.html ${env.REMOTE_USER}@${env.REMOTE_HOST}:${env.REMOTE_DOC_ROOT}/index.html
+                    """
                 }
             }
         }
